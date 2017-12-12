@@ -1,0 +1,13 @@
+dist: trusty
+sudo: false
+language: cpp
+install:
+  - DEPS_DIR="${TRAVIS_BUILD_DIR}/deps"
+  - mkdir ${DEPS_DIR} && cd ${DEPS_DIR}
+  - git clone https://github.com/intel/gmmlib.git gmmlib
+  - cd ..
+script:
+  - mkdir build
+  - cd build
+  - cmake -DBS_DIR_GMMLIB=${DEPS_DIR}/gmmlib/Source/GmmLib/ -DBS_DIR_COMMON=${DEPS_DIR}/gmmlib/Source/Common/ -DBS_DIR_INC=${DEPS_DIR}/gmmlib/Source/inc/ -DBS_DIR_MEDIA=${TRAVIS_BUILD_DIR} ..
+  - cmake --build .
