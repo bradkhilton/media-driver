@@ -1,24 +1,18 @@
 dist: trusty
 sudo: required
 language: cpp
+services:
+  - docker
 install:
-  - sudo apt-get install -y autoconf libtool libdrm-dev xorg xorg-dev openbox libx11-dev libgl1-mesa-glx libgl1-mesa-dev
   - DEPS_DIR="${TRAVIS_BUILD_DIR}/deps"
   - mkdir ${DEPS_DIR} && cd ${DEPS_DIR}
   - git clone https://github.com/intel/gmmlib.git gmmlib
   - git clone https://github.com/01org/libva
-  - cd libva
-  - ./autogen.sh --prefix=/usr --libdir=/usr/lib/x86_64-linux-gnu && make
-  - sudo make install
+  - docker run -v ${TRAVIS_BUILD_DIR}:/opt/src -w /opt/src/deps/libva bradkhilton/intel-media-driver ./autogen.sh --prefix=/usr --libdir=/usr/lib/x86_64-linux-gnu
+  - docker run -v ${TRAVIS_BUILD_DIR}:/opt/src -w /opt/src/deps/libva bradkhilton/intel-media-driver make install
   - cd ..
 
-  - curl -O https://cmake.org/files/v3.8/cmake-3.8.2-Linux-x86_64.sh
-  - mkdir ${DEPS_DIR}/cmake
-  - sh cmake-3.8.2-Linux-x86_64.sh --prefix=${DEPS_DIR}/cmake --exclude-subdir
-
-  - cd ..
 script:
-  - mkdir build
-  - cd build
-  - ${DEPS_DIR}/cmake/bin/cmake -DBS_DIR_GMMLIB=${DEPS_DIR}/gmmlib/Source/GmmLib/ -DBS_DIR_COMMON=${DEPS_DIR}/gmmlib/Source/Common/ -DBS_DIR_INC=${DEPS_DIR}/gmmlib/Source/inc/ -DBS_DIR_MEDIA=${TRAVIS_BUILD_DIR} -DMEDIA_VERSION="0.1.0" -DBUILD_ALONG_WITH_CMRTLIB=1 -DBUILD_TYPE=Release ..
-  - ${DEPS_DIR}/cmake/bin/cmake --build . -- -j 4
+  - rm -rf build && mkdir build
+  - docker run -v ${TRAVIS_BUILD_DIR}:/opt/src -w /opt/src/build bradkhilton/intel-media-driver cmake -DBS_DIR_GMMLIB=/opt/src/deps/gmmlib/Source/GmmLib/ -DBS_DIR_COMMON=/opt/src/deps/gmmlib/Source/Common/ -DBS_DIR_INC=/opt/src/deps/gmmlib/Source/inc/ -DBS_DIR_MEDIA=/opt/src -DMEDIA_VERSION="0.1.0" -DBUILD_ALONG_WITH_CMRTLIB=1 -DBUILD_TYPE=Release ..
+  - docker run -v ${TRAVIS_BUILD_DIR}:/opt/src -w /opt/src/build bradkhilton/intel-media-driver cmake  --build . -- -j 4
