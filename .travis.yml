@@ -4,8 +4,7 @@ language: cpp
 services:
   - docker
 install:
-  - DEPS_DIR="${TRAVIS_BUILD_DIR}/deps"
-  - mkdir ${DEPS_DIR} && cd ${DEPS_DIR}
+  - mkdir deps && cd deps
   - git clone https://github.com/intel/gmmlib.git gmmlib
   - cd ..
 
