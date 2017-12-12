@@ -1,6 +1,7 @@
 dist: trusty
 sudo: required
 language: cpp
+cache: ccache
 services:
   - docker
 install:
@@ -10,5 +11,28 @@ install:
 
 script:
   - rm -rf build && mkdir build
-  - docker run -v ${TRAVIS_BUILD_DIR}:/opt/src -w /opt/src/build bradkhilton/intel-linux-docker cmake -DBS_DIR_GMMLIB=/opt/src/deps/gmmlib/Source/GmmLib/ -DBS_DIR_COMMON=/opt/src/deps/gmmlib/Source/Common/ -DBS_DIR_INC=/opt/src/deps/gmmlib/Source/inc/ -DBS_DIR_MEDIA=/opt/src -DMEDIA_VERSION="0.1.0" -DBUILD_ALONG_WITH_CMRTLIB=1 -DBUILD_TYPE=Release ..
-  - docker run -v ${TRAVIS_BUILD_DIR}:/opt/src -w /opt/src/build bradkhilton/intel-linux-docker cmake  --build . -- -j 4
+  - mkdir -p $HOME/.ccache
+  - >
+      docker run
+      -v $HOME/.ccache:/opt/ccache
+      -v ${TRAVIS_BUILD_DIR}:/opt/src
+      -w /opt/src/build
+      -e CCACHE_DIR=/opt/ccache
+      bradkhilton/intel-linux-docker
+      cmake
+      -DBS_DIR_GMMLIB=/opt/src/deps/gmmlib/Source/GmmLib/
+      -DBS_DIR_COMMON=/opt/src/deps/gmmlib/Source/Common/
+      -DBS_DIR_INC=/opt/src/deps/gmmlib/Source/inc/
+      -DBS_DIR_MEDIA=/opt/src
+      -DMEDIA_VERSION="0.1.0"
+      -DBUILD_ALONG_WITH_CMRTLIB=1
+      -DBUILD_TYPE=Release
+      ..
+  - >
+      docker run
+      -v $HOME/.ccache:/opt/ccache
+      -v ${TRAVIS_BUILD_DIR}:/opt/src
+      -w /opt/src/build
+      -e CCACHE_DIR=/opt/ccache
+      bradkhilton/intel-linux-docker
+      cmake  --build . -- -j 4
