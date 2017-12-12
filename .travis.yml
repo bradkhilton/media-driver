@@ -20,5 +20,5 @@ install:
 script:
   - mkdir build
   - cd build
-  - ${DEPS_DIR}/cmake/bin/cmake -DBS_DIR_GMMLIB=${DEPS_DIR}/gmmlib/Source/GmmLib/ -DBS_DIR_COMMON=${DEPS_DIR}/gmmlib/Source/Common/ -DBS_DIR_INC=${DEPS_DIR}/gmmlib/Source/inc/ -DBS_DIR_MEDIA=${TRAVIS_BUILD_DIR} ..
-  - ${DEPS_DIR}/cmake/bin/cmake --build .
+  - ${DEPS_DIR}/cmake/bin/cmake -DBS_DIR_GMMLIB=${DEPS_DIR}/gmmlib/Source/GmmLib/ -DBS_DIR_COMMON=${DEPS_DIR}/gmmlib/Source/Common/ -DBS_DIR_INC=${DEPS_DIR}/gmmlib/Source/inc/ -DBS_DIR_MEDIA=${TRAVIS_BUILD_DIR} -DMEDIA_VERSION="0.1.0" -DBUILD_ALONG_WITH_CMRTLIB=1 -DBUILD_TYPE=Release ..
+  - ${DEPS_DIR}/cmake/bin/cmake --build . -- -j 4
