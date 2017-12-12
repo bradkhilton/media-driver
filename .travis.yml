@@ -7,12 +7,9 @@ install:
   - DEPS_DIR="${TRAVIS_BUILD_DIR}/deps"
   - mkdir ${DEPS_DIR} && cd ${DEPS_DIR}
   - git clone https://github.com/intel/gmmlib.git gmmlib
-  - git clone https://github.com/01org/libva
-  - docker run -v ${TRAVIS_BUILD_DIR}:/opt/src -w /opt/src/deps/libva bradkhilton/intel-media-driver ./autogen.sh --prefix=/usr --libdir=/usr/lib/x86_64-linux-gnu
-  - docker run -v ${TRAVIS_BUILD_DIR}:/opt/src -w /opt/src/deps/libva bradkhilton/intel-media-driver make install
   - cd ..
 
 script:
   - rm -rf build && mkdir build
-  - docker run -v ${TRAVIS_BUILD_DIR}:/opt/src -w /opt/src/build bradkhilton/intel-media-driver cmake -DBS_DIR_GMMLIB=/opt/src/deps/gmmlib/Source/GmmLib/ -DBS_DIR_COMMON=/opt/src/deps/gmmlib/Source/Common/ -DBS_DIR_INC=/opt/src/deps/gmmlib/Source/inc/ -DBS_DIR_MEDIA=/opt/src -DMEDIA_VERSION="0.1.0" -DBUILD_ALONG_WITH_CMRTLIB=1 -DBUILD_TYPE=Release ..
-  - docker run -v ${TRAVIS_BUILD_DIR}:/opt/src -w /opt/src/build bradkhilton/intel-media-driver cmake  --build . -- -j 4
+  - docker run -v ${TRAVIS_BUILD_DIR}:/opt/src -w /opt/src/build bradkhilton/intel-linux-docker cmake -DBS_DIR_GMMLIB=/opt/src/deps/gmmlib/Source/GmmLib/ -DBS_DIR_COMMON=/opt/src/deps/gmmlib/Source/Common/ -DBS_DIR_INC=/opt/src/deps/gmmlib/Source/inc/ -DBS_DIR_MEDIA=/opt/src -DMEDIA_VERSION="0.1.0" -DBUILD_ALONG_WITH_CMRTLIB=1 -DBUILD_TYPE=Release ..
+  - docker run -v ${TRAVIS_BUILD_DIR}:/opt/src -w /opt/src/build bradkhilton/intel-linux-docker cmake  --build . -- -j 4
