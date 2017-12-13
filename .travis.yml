@@ -12,6 +12,8 @@ install:
 script:
   - rm -rf build && mkdir build
   - mkdir -p $HOME/.ccache
+  - ccache -s
+  - ccache -z
   - >
       docker run
       -v $HOME/.ccache:/opt/ccache
@@ -36,3 +38,4 @@ script:
       -e CCACHE_DIR=/opt/ccache
       bradkhilton/intel-linux-docker
       cmake  --build . -- -j 4
+  - ccache -s
